@@ -12,21 +12,19 @@ function transform_image(image_path)
 
     % 缩放
     scaled_img = imresize(img, 0.5);
-    
-    % 使用 imshowpair 同时显示原始图像和缩放后的图像
     subplot(2, 2, 2);
-    imshowpair(img, scaled_img, 'montage');
-    title('原始图像 vs 缩放后的图像');
+    imshow(scaled_img);
+    title('缩放后的图像');
 
     % 旋转
     rotated_img = imrotate(img, 45, 'bilinear', 'crop');
     subplot(2, 2, 3);
     imshow(rotated_img);
     title('旋转后的图像');
-    
-    % 如果需要展示更多的变换，可以使用第四个subplot
-    % subplot(2, 2, 4);
-    % 这里可以放置其他的图像处理操作和展示结果
-    % imshow(other_transformed_img);
-    % title('其他变换后的图像');
+
+    % 亮度调整
+    adjusted_brightness_img = imadjust(img, [0.2 0.8], [], 1);
+    subplot(2, 2, 4);
+    imshow(adjusted_brightness_img);
+    title('亮度调整后的图像');
 end
