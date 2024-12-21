@@ -25,7 +25,7 @@ function transform_image(image_path)
     title('旋转后的图像');
     
     % 如果需要展示更多的变换，可以使用第四个subplot
-    subplot(2, 2, 4);
+    % subplot(2, 2, 4);
     % 这里可以放置其他的图像处理操作和展示结果
     % imshow(other_transformed_img);
     % title('其他变换后的图像');
