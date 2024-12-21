@@ -1,30 +1,30 @@
 function contrast_enhancement(image_path)
-    % 读取图像并转换为灰度图像
-    img = imread(image_path);
-    gray_img = rgb2gray(img);
+   % 读取图像
+    originalImage = imread(image_path);
 
-    % 线性变换
-    linear_transformed = imadjust(gray_img, [0.2 0.8], []);
-    subplot(2, 2, 1);
-    imshow(linear_transformed);
-    title('线性变换');
+    % 灰度化
+    grayImage = rgb2gray(originalImage);
 
-    % 对数变换
-    log_transformed = log(1 + double(gray_img));
-    log_transformed = imadjust(log_transformed, [], []);
-    subplot(2, 2, 2);
-    imshow(uint8(log_transformed * 255)); % 将结果转换为uint8格式
-    title('对数变换');
+    % 线性对比度增强
+    linearEnhancedImage = imadjust(grayImage);
 
-    % 指数变换
-    exp_transformed = exp(double(gray_img) - 1);
-    exp_transformed = imadjust(exp_transformed, [], []);
-    subplot(2, 2, 3);
-    imshow(uint8(exp_transformed * 255)); % 将结果转换为uint8格式
-    title('指数变换');
-    
-    % 显示原始灰度图像
-    subplot(2, 2, 4);
-    imshow(gray_img);
-    title('原始灰度图像');
+    % 非线性对比度增强 - 对数变换
+    logEnhancedImage = imadjust(mat2gray(grayImage), [], []); % 归一化并调整对比度
+    logEnhancedImage = log(1 + logEnhancedImage); % 应用对数变换
+    logEnhancedImage = mat2gray(logEnhancedImage); % 重新归一化到[0,1]
+
+    % 非线性对比度增强 - 指数变换
+    expEnhancedImage = imadjust(mat2gray(grayImage), [], []); % 归一化并调整对比度
+    expEnhancedImage = exp(expEnhancedImage - 1); % 应用指数变换
+    expEnhancedImage = mat2gray(expEnhancedImage); % 重新归一化到[0,1]
+
+    % 将结果存储在cell数组中，方便返回多个图像
+    enhancedImages = {grayImage, linearEnhancedImage, logEnhancedImage, expEnhancedImage};
+
+    % 显示结果
+    figure;
+    subplot(2,2,1), imshow(grayImage), title('原始灰度图像');
+    subplot(2,2,2), imshow(linearEnhancedImage), title('线性对比度增强');
+    subplot(2,2,3), imshow(logEnhancedImage), title('对数对比度增强');
+    subplot(2,2,4), imshow(expEnhancedImage), title('指数对比度增强');
 end
