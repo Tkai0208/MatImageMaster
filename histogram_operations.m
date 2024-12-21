@@ -34,19 +34,21 @@ end
 
 function matched_channel = histogram_matching_single_channel(source_channel, ref_channel)
     % 计算两个图像的直方图
-    [source_hist, ~] = imhist(uint8(source_channel));
-    [ref_hist, ~] = imhist(uint8(ref_channel));
+    source_hist = imhist(uint8(source_channel));
+    ref_hist = imhist(uint8(ref_channel));
 
     % 计算累积直方图
-    source_cdf = cumsum(source_hist);
-    ref_cdf = cumsum(ref_hist);
+    source_cdf = cumsum(source_hist) / sum(source_hist);
+    ref_cdf = cumsum(ref_hist) / sum(ref_hist);
 
-    % 归一化累积直方图
-    source_cdf = source_cdf / max(source_cdf);
-    ref_cdf = ref_cdf / max(ref_cdf);
+    % 确保CDF值唯一，并且处理边界情况
+    [~, idx] = unique(ref_cdf, 'first'); % 获取唯一的CDF值及其索引
+    ref_cdf_unique = ref_cdf(idx);       % 使用索引获取唯一的CDF值
+    ref_bins_unique = 0:255;             % 创建完整的灰度级向量
+    ref_bins_unique = ref_bins_unique(idx); % 使用相同的索引选择对应的灰度级
 
     % 创建映射表
-    mapping = interp1(ref_cdf, 0:255, source_cdf, 'nearest');
+    mapping = interp1(ref_cdf_unique, ref_bins_unique, source_cdf, 'nearest');
 
     % 应用映射表
     matched_channel = interp1(0:255, mapping, double(source_channel), 'nearest');
