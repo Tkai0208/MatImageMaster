@@ -18,9 +18,6 @@ function contrast_enhancement(image_path)
     expEnhancedImage = exp(expEnhancedImage - 1); % 应用指数变换
     expEnhancedImage = mat2gray(expEnhancedImage); % 重新归一化到[0,1]
 
-    % 将结果存储在cell数组中，方便返回多个图像
-    enhancedImages = {grayImage, linearEnhancedImage, logEnhancedImage, expEnhancedImage};
-
     % 显示结果
     figure;
     subplot(2,2,1), imshow(grayImage), title('原始灰度图像');
