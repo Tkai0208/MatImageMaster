@@ -40,10 +40,13 @@ function noise_and_filter(image_path, noise_type, noise_param)
     lowpass_mask = fspecial('average', lowpass_mask_size);
     lowpass_mask = imresize(lowpass_mask, [M, N], 'bilinear');
     
+    % 应用低通滤波器
     filtered_fft = ifft2(ifftshift(fft_shifted .* lowpass_mask));
     filtered_img_freq = real(filtered_fft);
+    
+    % 显示频域滤波后的图像
     subplot(2, 2, 3);
-    imshow(filtered_img_freq);
+    imshow(filtered_img_freq, []);
     title('频域滤波后的图像');
 
     % 显示原始图像
