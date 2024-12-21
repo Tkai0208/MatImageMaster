@@ -12,9 +12,11 @@ function transform_image(image_path)
 
     % 缩放
     scaled_img = imresize(img, 0.5);
+    
+    % 使用 imshowpair 同时显示原始图像和缩放后的图像
     subplot(2, 2, 2);
-    imshow(scaled_img);
-    title('缩放后的图像');
+    imshowpair(img, scaled_img, 'montage');
+    title('原始图像 vs 缩放后的图像');
 
     % 旋转
     rotated_img = imrotate(img, 45, 'bilinear', 'crop');
