@@ -22,4 +22,9 @@ function contrast_enhancement(image_path)
     subplot(2, 2, 3);
     imshow(uint8(exp_transformed * 255)); % 将结果转换为uint8格式
     title('指数变换');
+    
+    % 显示原始灰度图像
+    subplot(2, 2, 4);
+    imshow(gray_img);
+    title('原始灰度图像');
 end
