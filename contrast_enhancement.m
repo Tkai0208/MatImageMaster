@@ -10,14 +10,16 @@ function contrast_enhancement(image_path)
     title('线性变换');
 
     % 对数变换
-    log_transformed = imadjust(log(1 + double(gray_img)), [], []);
+    log_transformed = log(1 + double(gray_img));
+    log_transformed = imadjust(log_transformed, [], []);
     subplot(2, 2, 2);
-    imshow(log_transformed);
+    imshow(uint8(log_transformed * 255)); % 将结果转换为uint8格式
     title('对数变换');
 
     % 指数变换
-    exp_transformed = imadjust(exp(double(gray_img) - 1), [], []);
+    exp_transformed = exp(double(gray_img) - 1);
+    exp_transformed = imadjust(exp_transformed, [], []);
     subplot(2, 2, 3);
-    imshow(exp_transformed);
+    imshow(uint8(exp_transformed * 255)); % 将结果转换为uint8格式
     title('指数变换');
 end
