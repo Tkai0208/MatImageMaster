@@ -25,7 +25,7 @@ function extractHOGFeatures(imagePath1, imagePath2)
     numBins = 9;
     angle = 180 / numBins;
     PhaseOriginal = mod(PhaseOriginal + pi, 2*pi) * (numBins / (2*pi));
-    PhaseTarget = mod(PhaseTarget + pi, 2*pi) * (numBins / (2*pi));
+    PhaseTarget = mod(PhaseTarget + pi,2*pi) * (numBins / (2*pi));
     
     % 梯度直方图
     [HistOriginal, ~] = histcounts(PhaseOriginal(:), 0:angle:angle*numBins);
@@ -35,8 +35,13 @@ function extractHOGFeatures(imagePath1, imagePath2)
     HistOriginal = HistOriginal / sum(HistOriginal);
     HistTarget = HistTarget / sum(HistTarget);
     
-    % 显示 HOG 特征
+    % 显示原始图像和目标图像
     figure;
-    subplot(1,2,1), bar(HistOriginal), title('Original Image HOG Features');
-    subplot(1,2,2), bar(HistTarget), title('Target Image HOG Features');
+    subplot(2,2,1), imshow(grayOriginal), title('原始图像');
+    subplot(2,2,2), imshow(grayTarget), title('目标提取图像');
+    
+    % 显示 HOG 特征直方图
+    figure;
+    subplot(1,2,1), bar(HistOriginal), title('原始图像 HOG 特征');
+    subplot(1,2,2), bar(HistTarget), title('目标图像 HOG 特征');
 end
