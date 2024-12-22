@@ -8,7 +8,11 @@ function object_extraction(image_path)
     bw_img = imbinarize(gray_img, threshold);
     labeled_img = bwlabel(bw_img);
     stats = regionprops(labeled_img, 'BoundingBox');
-    for i = 1:length(stats)
+
+    % 绘制边界框
+    figure;
+    max_subplots = 4; % 最多显示4个子图
+    for i = 1:min(length(stats), max_subplots)
         bbox = stats(i).BoundingBox;
         subplot(2, 2, i);
         imshow(img);
