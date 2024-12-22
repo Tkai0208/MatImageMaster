@@ -1,52 +1,66 @@
-function extractLBPFeatures(imagePath1, imagePath2)
-    % 读取原始图像和目标图像
-    originalImage = imread(imagePath1);
-    targetImage = imread(imagePath2);
+function extractLBPFeatures(image_path, target_image_path)
+    % 读取原始图像
+    img = imread(image_path);
     
-    % 转换为灰度图像
-    grayOriginal = rgb2gray(originalImage);
-    grayTarget = rgb2gray(targetImage);
+    % 确保图像是灰度图像
+    if size(img, 3) == 3 % 检查是否是彩色图像
+        gray_img = rgb2gray(img); % 将彩色图像转换为灰度图像
+    else
+        gray_img = img; % 如果已经是灰度图像，则保持不变
+    end
     
-    % 提取 LBP 特征
-    lbpOriginal = customLocalBinaryPattern(grayOriginal);
-    lbpTarget = customLocalBinaryPattern(grayTarget);
+    % 读取目标图像
+    target_img = imread(target_image_path);
     
-    % 显示 LBP 特征图
+    % 确保目标图像是灰度图像
+    if size(target_img, 3) == 3 % 检查是否是彩色图像
+        gray_target_img = rgb2gray(target_img); % 将彩色图像转换为灰度图像
+    else
+        gray_target_img = target_img; % 如果已经是灰度图像，则保持不变
+    end
+    
+    % 对原始图像进行特征提取
+    original_lbp_features = computeLBP(gray_img);
+    
+    % 对目标图像进行特征提取
+    target_lbp_features = computeLBP(gray_target_img);
+    
+    % 显示结果
     figure;
-    subplot(1,2,1), imshow(uint8(lbpOriginal)), title('Original Image LBP Features');
-    subplot(1,2,2), imshow(uint8(lbpTarget)), title('Target Image LBP Features');
-    
-    % 显示第一个 8x8 子区域的 LBP 直方图
-    subImOriginal = lbpOriginal(1:8, 1:8);
-    subImTarget = lbpTarget(1:8, 1:8);
-    figure;
-    subplot(1,2,1), imhist(subImOriginal), title('Original Sub-Image LBP Histogram');
-    subplot(1,2,2), imhist(subImTarget), title('Target Sub-Image LBP Histogram');
+    subplot(2, 2, 1); imshow(gray_img); title('原始图像');
+    subplot(2, 2, 2); imshow(original_lbp_features, []); title('原始图像 LBP 特征');
+    subplot(2, 2, 3); imshow(gray_target_img); title('目标图像');
+    subplot(2, 2, 4); imshow(target_lbp_features, []); title('目标图像 LBP 特征');
 end
 
-function lbp = customLocalBinaryPattern(grayImage)
+% 计算 LBP 特征的辅助函数
+function lbpFeatures = computeLBP(grayImage)
     % 获取图像尺寸
     [rows, cols] = size(grayImage);
-    % 初始化 LBP 图像
-    lbp = zeros(rows-2, cols-2);
     
-    % 定义邻域偏移量
-    offsets = [0 -1 1; -1 0 1; -1 1 0] * 1; % 3x3 邻域偏移量
+    % 初始化 LBP 图像
+    lbpFeatures = zeros(rows - 2, cols - 2);
     
     % 计算 LBP 值
     for i = 2:rows-1
         for j = 2:cols-1
             center = grayImage(i, j);
-             binaryString = '';
-             for k = 1:size(offsets, 1)
-                 neighbor = grayImage(i + offsets(k, 1), j + offsets(k, 2));
-                 if neighbor >= center
-                     binaryString = [binaryString '1'];
-                 else
-                     binaryString = [binaryString '0'];
-                 end
-             end
-             lbp(i-1, j-1) = bin2dec(binaryString);
-         end
-     end
+            binaryString = '';
+            
+            % 定义邻域像素的索引
+            neighbors = [i-1 j-1; i-1 j; i-1 j+1; i j-1; i j+1; i+1 j-1; i+1 j; i+1 j+1];
+            
+            for k = 1:8
+                neighbor = grayImage(neighbors(k, 1), neighbors(k, 2));
+                if neighbor >= center
+                    binaryString = [binaryString '1'];
+                else
+                    binaryString = [binaryString '0'];
+                end
+            end
+            
+            % 将二进制字符串转换为十进制数
+            lbpFeatures(i-1, j-1) = bin2dec(binaryString);
+        end
+    end
 end
