@@ -1,20 +1,21 @@
 function transform_image(image_path)
+
     % 读取图像
     img = imread(image_path);
 
-    % 创建一个新的图形窗口，并设置为2x2布局
+    % 创建一个新的图形窗口
     figure;
 
-    % 显示原始图像
-    subplot(2, 2, 1);
+    % 第一个subplot显示原始图像
+    subplot(2, 2, 1); % 1行2列的第1个位置
     imshow(img);
     title('原始图像');
 
-    % 缩放
-    scaled_img = imresize(img, 0.5);
-    subplot(2, 2, 2);
-    imshow(scaled_img);
-    title('缩放后的图像');
+    % 第二个subplot显示原始图像和缩放后的图像
+    subplot(2, 2, 2); % 1行2列的第2个位置
+    scaled_img = imresize(img, 0.5); % 缩放图像
+    imshowpair(img, scaled_img, 'montage');
+    title('原始图像与缩放后的图像');
 
     % 旋转
     rotated_img = imrotate(img, 45, 'bilinear', 'crop');
