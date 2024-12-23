@@ -5,19 +5,19 @@ function histogram_operations(image_path)
 
     % 显示原始图像
     figure;
-    subplot(2, 3, 1);
+    subplot(2, 2, 1);
     imshow(gray_img);
     title('原始图像');
 
     % 计算灰度直方图
     [counts, bins] = imhist(gray_img);
-    subplot(2, 3, 4);
+    subplot(2, 2, 2);
     bar(bins, counts);
     title('灰度直方图');
 
     % 直方图均衡化
     eq_img = histeq(gray_img);
-    subplot(2, 3, 2);
+    subplot(2, 2, 3);
     imshow(eq_img);
     title('直方图均衡化后的图像');
 
@@ -27,7 +27,7 @@ function histogram_operations(image_path)
     ref_gray_img = rgb2gray(ref_img); % 确保参考图像也是灰度图像
 
     matched_img = histogram_matching_single_channel(double(gray_img), double(ref_gray_img));
-    subplot(2, 3, 5);
+    subplot(2, 2, 4);
     imshow(uint8(matched_img)); % 转换回uint8类型以便显示
     title('直方图匹配后的图像');
 end
