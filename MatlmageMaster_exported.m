@@ -95,8 +95,30 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
 
         % Value changed function: noiseTypeDropDown
         function noiseTypeDropDownValueChanged(app, event)
-            value = app.noiseTypeDropDown.Value;
-            
+            % 获取存储的图像路径
+            imagePath = getappdata(app.UIFigure, 'ImagePath');
+            if isempty(imagePath)
+                warning('没有选择图片');
+                return;
+            end
+
+            % 获取用户选择的噪声类型
+            noiseType = app.noiseTypeDropDown.Value;
+
+            % 获取用户输入的噪声参数
+            noiseParam = str2double(app.noiseParamEditField.Value);
+            if isnan(noiseParam)
+                warndlg('请输入有效的噪声参数', '无效参数');
+                return;
+            end
+
+            try
+                % 调用噪声处理函数
+                noise_and_filter(imagePath, noiseType, noiseParam);
+            catch ME
+                % 错误处理
+                warndlg(['发生错误: ', ME.message], '错误');
+            end
         end
 
         % Button pushed function: noiseAndFilter_CallbackButton
@@ -108,26 +130,19 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
                 return;
             end
 
-            % 获取用户选择的噪声类型和参数
+            % 获取用户选择的噪声类型
             noiseType = app.noiseTypeDropDown.Value;
-            noiseParam = str2double(app.noiseParamEditField.Value);
 
-            % 检查噪声参数是否有效
+            % 获取用户输入的噪声参数
+            noiseParam = str2double(app.noiseParamEditField.Value);
             if isnan(noiseParam)
                 warndlg('请输入有效的噪声参数', '无效参数');
                 return;
             end
 
             try
-                % 根据用户选择的滤波方法调整参数传递
-                filterMethod = 'spatial'; % 默认为空域滤波
-                if app.freqFilterButton.Selected
-                    filterMethod = 'frequency';
-                end
-
-                % 调用你的现有函数，并传递必要的参数
-                noise_and_filter(imagePath, noiseType, noiseParam, filterMethod);
-
+                % 调用噪声处理函数
+                noise_and_filter(imagePath, noiseType, noiseParam);
             catch ME
                 % 错误处理
                 warndlg(['发生错误: ', ME.message], '错误');
@@ -149,7 +164,7 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
             % Create imageAxes
             app.imageAxes = uiaxes(app.UIFigure);
             title(app.imageAxes, '图片显示')
-            app.imageAxes.Position = [10 14 382 480];
+            app.imageAxes.Position = [11 1 382 493];
 
             % Create open_pictureButton
             app.open_pictureButton = uibutton(app.UIFigure, 'state');
@@ -183,10 +198,10 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
 
             % Create noiseTypeDropDown
             app.noiseTypeDropDown = uidropdown(app.UIFigure);
-            app.noiseTypeDropDown.Items = {'Gaussian', 'Salt & Pepper', 'Speckle'};
+            app.noiseTypeDropDown.Items = {'gaussian', 'salt & pepper', 'speckle'};
             app.noiseTypeDropDown.ValueChangedFcn = createCallbackFcn(app, @noiseTypeDropDownValueChanged, true);
             app.noiseTypeDropDown.Position = [545 273 100 22];
-            app.noiseTypeDropDown.Value = 'Gaussian';
+            app.noiseTypeDropDown.Value = 'gaussian';
 
             % Create noiseAndFilter_CallbackButton
             app.noiseAndFilter_CallbackButton = uibutton(app.UIFigure, 'push');
