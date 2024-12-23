@@ -3,6 +3,10 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                       matlab.ui.Figure
+        extractHOGFeatures_CallbackButton  matlab.ui.control.Button
+        extractLBPFeatures_CallbackButton  matlab.ui.control.Button
+        extractTarget_CallbackButton   matlab.ui.control.Button
+        edgeDetection_CallbackButton   matlab.ui.control.Button
         noiseParamEditField            matlab.ui.control.EditField
         noiseParamEditFieldLabel       matlab.ui.control.Label
         noiseAndFilter_CallbackButton  matlab.ui.control.Button
@@ -148,6 +152,86 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
                 warndlg(['发生错误: ', ME.message], '错误');
             end
         end
+
+        % Button pushed function: edgeDetection_CallbackButton
+        function edgeDetection_CallbackButtonPushed(app, event)
+            % 获取存储的图像路径
+            imagePath = getappdata(app.UIFigure, 'ImagePath');
+            if isempty(imagePath)
+                warning('没有选择图片');
+                return;
+            end
+
+            try
+                % 调用边缘检测函数，这将打开新的图形窗口并显示结果
+                edge_detection(imagePath);
+
+            catch ME
+                % 错误处理
+                warndlg(['发生错误: ', ME.message], '错误');
+            end
+        end
+
+        % Button pushed function: extractTarget_CallbackButton
+        function extractTarget_CallbackButtonPushed(app, event)
+            % 获取存储的图像路径
+            imagePath = getappdata(app.UIFigure, 'ImagePath');
+            if isempty(imagePath)
+                warning('没有选择图片');
+                return;
+            end
+
+            try
+                % 调用目标提取函数
+                extract_target(imagePath);
+
+            catch ME
+                % 错误处理
+                warndlg(['发生错误: ', ME.message], '错误');
+            end
+        end
+
+        % Button pushed function: extractLBPFeatures_CallbackButton
+        function extractLBPFeatures_CallbackButtonPushed(app, event)
+            % 获取存储的图像路径和提取的目标图像路径
+            originalImagePath = getappdata(app.UIFigure, 'ImagePath');
+            targetImagePath = fullfile(fileparts(originalImagePath), 'extracted_target.png');
+
+            if isempty(originalImagePath) || ~isfile(targetImagePath)
+                warning('缺少原始图片或提取的目标图片');
+                return;
+            end
+
+            try
+                % 调用LBP特征提取函数
+                extractLBPFeatures(originalImagePath, targetImagePath);
+
+            catch ME
+                % 错误处理
+                warndlg(['发生错误: ', ME.message], '错误');
+            end
+        end
+
+        % Button pushed function: extractHOGFeatures_CallbackButton
+        function extractHOGFeatures_CallbackButtonPushed(app, event)
+            % 获取存储的图像路径和提取的目标图像路径
+            originalImagePath = getappdata(app.UIFigure, 'ImagePath');
+            targetImagePath = fullfile(fileparts(originalImagePath), 'extracted_target.png');
+
+            if isempty(originalImagePath) || ~isfile(targetImagePath)
+                warning('缺少原始图片或提取的目标图片');
+                return;
+            end
+
+            try
+                % 调用HOG特征提取函数
+                extractHOGFeatures(originalImagePath, targetImagePath);
+
+            catch ME
+                % 错误处理
+                warndlg(['发生错误: ', ME.message], '错误');
+            end
+        end
     end
 
     % Component initialization
@@ -206,7 +290,7 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
             % Create noiseAndFilter_CallbackButton
             app.noiseAndFilter_CallbackButton = uibutton(app.UIFigure, 'push');
             app.noiseAndFilter_CallbackButton.ButtonPushedFcn = createCallbackFcn(app, @noiseAndFilter_CallbackButtonPushed, true);
-            app.noiseAndFilter_CallbackButton.Position = [418 211 144 23];
+            app.noiseAndFilter_CallbackButton.Position = [414 210 144 23];
             app.noiseAndFilter_CallbackButton.Text = 'noiseAndFilter_Callback';
 
             % Create noiseParamEditFieldLabel
@@ -218,6 +302,30 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
             % Create noiseParamEditField
             app.noiseParamEditField = uieditfield(app.UIFigure, 'text');
             app.noiseParamEditField.Position = [545 243 100 22];
+
+            % Create edgeDetection_CallbackButton
+            app.edgeDetection_CallbackButton = uibutton(app.UIFigure, 'push');
+            app.edgeDetection_CallbackButton.ButtonPushedFcn = createCallbackFcn(app, @edgeDetection_CallbackButtonPushed, true);
+            app.edgeDetection_CallbackButton.Position = [414 159 145 23];
+            app.edgeDetection_CallbackButton.Text = 'edgeDetection_Callback';
+
+            % Create extractTarget_CallbackButton
+            app.extractTarget_CallbackButton = uibutton(app.UIFigure, 'push');
+            app.extractTarget_CallbackButton.ButtonPushedFcn = createCallbackFcn(app, @extractTarget_CallbackButtonPushed, true);
+            app.extractTarget_CallbackButton.Position = [414 121 140 23];
+            app.extractTarget_CallbackButton.Text = ' extractTarget_Callback';
+
+            % Create extractLBPFeatures_CallbackButton
+            app.extractLBPFeatures_CallbackButton = uibutton(app.UIFigure, 'push');
+            app.extractLBPFeatures_CallbackButton.ButtonPushedFcn = createCallbackFcn(app, @extractLBPFeatures_CallbackButtonPushed, true);
+            app.extractLBPFeatures_CallbackButton.Position = [414 85 174 23];
+            app.extractLBPFeatures_CallbackButton.Text = 'extractLBPFeatures_Callback';
+
+            % Create extractHOGFeatures_CallbackButton
+            app.extractHOGFeatures_CallbackButton = uibutton(app.UIFigure, 'push');
+            app.extractHOGFeatures_CallbackButton.ButtonPushedFcn = createCallbackFcn(app, @extractHOGFeatures_CallbackButtonPushed, true);
+            app.extractHOGFeatures_CallbackButton.Position = [414 46 178 23];
+            app.extractHOGFeatures_CallbackButton.Text = 'extractHOGFeatures_Callback';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
