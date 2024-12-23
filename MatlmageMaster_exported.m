@@ -259,13 +259,17 @@ classdef MatlmageMaster_exported < matlab.apps.AppBase
 
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Color = [0.9216 0.8471 0.8471];
             app.UIFigure.Position = [100 100 869 599];
             app.UIFigure.Name = 'MATLAB App';
 
             % Create imageAxes
             app.imageAxes = uiaxes(app.UIFigure);
-            title(app.imageAxes, '图片显示')
-            app.imageAxes.Position = [15 87 415 491];
+            title(app.imageAxes, '原图显示')
+            app.imageAxes.FontName = '黑体';
+            app.imageAxes.FontWeight = 'bold';
+            app.imageAxes.FontSize = 14;
+            app.imageAxes.Position = [11 79 419 499];
 
             % Create openImage_CallbackButton
             app.openImage_CallbackButton = uibutton(app.UIFigure, 'state');
