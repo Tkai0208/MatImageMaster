@@ -1,4 +1,4 @@
-function transform_image(image_path)
+function transform_image(image_path, brightness_factor)
 
     % 读取图像
     img = imread(image_path);
@@ -7,7 +7,7 @@ function transform_image(image_path)
     figure;
 
     % 第一个subplot显示原始图像
-    subplot(2, 3, 1); % 修改为2行3列布局，以便容纳新的翻转图像
+    subplot(2, 3, 1); 
     imshow(img);
     title('原始图像');
 
@@ -24,19 +24,26 @@ function transform_image(image_path)
     title('旋转后的图像');
 
     % 亮度调整
-    adjusted_brightness_img = imadjust(img, [0.2 0.8], [], 1);
+    if nargin > 1 && isnumeric(brightness_factor) && ~isempty(brightness_factor)
+        % 根据亮度调整因子调整亮度
+        % 这里使用了亮度调整因子来修改gamma值
+        adjusted_brightness_img = imadjust(img, [], [], brightness_factor);
+    else
+        % 如果没有提供亮度调整因子或提供的不是数值，则使用默认的亮度调整
+        adjusted_brightness_img = imadjust(img, [0.2 0.8], [], 1);
+    end
     subplot(2, 3, 4);
     imshow(adjusted_brightness_img);
-    title('亮度调整后的图像');
+    title(['亮度调整后的图像 (Gamma: ', num2str(brightness_factor), ')']);
 
     % 镜像翻转（这里我们进行水平翻转）
-    flipped_img = flip(img, 2); % 参数2表示沿第二维度（列方向）翻转，即水平翻转
+    flipped_img = flip(img, 2); 
     subplot(2, 3, 5);
     imshow(flipped_img);
     title('水平翻转后的图像');
     
-    %垂直翻转
-    vertical_flipped_img = flip(img, 1); % 参数1表示沿第一维度（行方向）翻转，即垂直翻转
+    % 垂直翻转
+    vertical_flipped_img = flip(img, 1); 
     subplot(2, 3, 6);
     imshow(vertical_flipped_img);
     title('垂直翻转后的图像');
