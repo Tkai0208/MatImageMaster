@@ -1,26 +1,18 @@
 function extract_target(imagePath)
-    % 读入图像并显示
+    % 读入图像
     Image = imread(imagePath);
-    imshow(Image);
-    title('请在图像上绘制目标区域');
-
-    % 等待用户绘制目标区域
-    drawn = drawfreehand;
-    wait(drawn);
-    drawnBW = createMask(drawn, Image);
-
-    % 将用户绘制的区域作为前景
-    foreground = drawnBW;
+    gray = im2double(rgb2gray(Image));
 
     % 形态学梯度
     se = strel('disk', 2);
-    edgeI = imdilate(foreground, se) - imerode(foreground, se);
+    edgeI = imdilate(gray, se) - imerode(gray, se);
 
     % 对比度增强
     enedgeI = imadjust(edgeI);
 
     % 梯度图像二值化
-    BW = imbinarize(enedgeI);
+    BW = zeros(size(gray));
+    BW(enedgeI > 0.1) = 1;
 
     % 闭运算闭合边界
     BW1 = imclose(BW, se);
@@ -41,9 +33,9 @@ function extract_target(imagePath)
     % 显示结果
     figure;
     subplot(231), imshow(Image), title('原图');
-    subplot(232), imshow(foreground), title('用户绘制的ROI');
-    subplot(233), imshow(edgeI), title('形态学梯度图像');
-    subplot(234), imshow(enedgeI), title('对比度增强');
-    subplot(235), imshow(BW), title('梯度图像二值化');
+    subplot(232), imshow(edgeI), title('形态学梯度图像');
+    subplot(233), imshow(enedgeI), title('对比度增强');
+    subplot(234), imshow(BW), title('梯度图像二值化');
+    subplot(235), imshow(BW2), title('目标模板');
     subplot(236), imshow(result), title('目标提取');
 end
